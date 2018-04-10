@@ -1,5 +1,7 @@
 package com.seu.monitor.utils;
 
+import com.seu.monitor.config.ComponentConfig;
+import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.entity.Machine;
 import com.seu.monitor.repository.MachineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,16 @@ public class MachineUtils {
         } else{
             return machineList.get(0);//取最上面的一个，且相同identity code 相同的machine应只有一个
         }
+    }
+
+
+    public static void createFirstMachine(){
+        if(machineUtils.machineRepository.findAll().size() == 0){
+            Machine machine = new Machine();
+            machine.setIdentifier(MachineConfig.firstMachineIdentifier);
+
+        }
+
     }
 
 }

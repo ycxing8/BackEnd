@@ -8,6 +8,7 @@ import com.seu.monitor.socket.*;
 public class MonitoringSystemApplication {
 
 	public static void main(String[] args) {
+
 		StartSocketServer.start();
 		SpringApplication.run(MonitoringSystemApplication.class, args);
 	}

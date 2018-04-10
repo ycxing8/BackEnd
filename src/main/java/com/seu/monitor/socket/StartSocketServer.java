@@ -10,17 +10,17 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.lang.Thread;
+
+import com.seu.monitor.config.SocketConfig;
 import com.seu.monitor.socket.SocketProcessThread;
 
 public class StartSocketServer {
-
-    public static int PORT = 8082;
 
     public static void start() {
         ServerSocket serverSocket = null;
         try {
             InetAddress address =InetAddress.getLocalHost();
-            serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(SocketConfig.PORT);
             System.out.println("ServerSocket Start:" + address.getHostAddress() +  ":"+ serverSocket);
 
         } catch (IOException e) {
@@ -31,7 +31,7 @@ public class StartSocketServer {
             ListenThread listenThread = new ListenThread(serverSocket);
             listenThread.start();
         }catch(Exception e){
-            System.out.println("listen thread start fail");
+            System.out.println("listen thread start fail！");
         }
     }
 

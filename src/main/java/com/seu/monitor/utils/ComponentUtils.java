@@ -1,6 +1,7 @@
 package com.seu.monitor.utils;
 
 import com.seu.monitor.entity.ComponentLog;
+import com.seu.monitor.entity.composite.ComponentCompositeKey;
 import com.seu.monitor.repository.ComponentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,8 +36,21 @@ public class ComponentUtils {
 
         //System.out.println("You have accessed database!");//for test
         //System.out.println(componentLog.getComponentIdentifier() +" this machine num is: " +componentList.size());
+        //System.out.println(componentList);
+        if(componentList != null && componentList.size() == 0){
+            com.seu.monitor.entity.Component component =
+                    new com.seu.monitor.entity.Component();
+            ComponentCompositeKey componentCompositeKey = new ComponentCompositeKey();
+            componentCompositeKey.setIdentifier(componentLog.getComponentIdentifier());
+            componentCompositeKey.setMachineIdentifier(componentLog.getMachineIdentifier());
+            component.setPk(componentCompositeKey);
+            component.setRealTimeData(componentLog.getData());
+            component.setStatus(componentLog.getStatus());
+            component.setUnit(componentLog.getUnit());
+            componentUtils.componentRepository.save(component);
+            return true;
 
-        if(componentList != null && componentList.size() == 1){
+        }else if(componentList != null && componentList.size() == 1){
             com.seu.monitor.entity.Component component = componentList.get(0);
             component.setRealTimeData(componentLog.getData());
             component.setStatus(componentLog.getStatus());
@@ -46,4 +60,5 @@ public class ComponentUtils {
         }
         return false;
     }
+
 }

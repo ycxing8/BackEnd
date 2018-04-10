@@ -8,17 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-//@RequestMapping(value = "/api/user")
+@RequestMapping(value = "/api/user")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
 
-    @PostMapping(value = "/user/login")
+    @PostMapping(value = "/login")
     public String loginTest(@RequestParam("name")String name,
                             @RequestParam("password")String password,
                             HttpSession session){
@@ -44,14 +45,14 @@ public class UserController {
         return "密码错误，请检查密码！";
     }
 
-    @GetMapping("/user/login_out")
+    @GetMapping("/login_out")
     public String loginOut(HttpSession session){
         session.removeAttribute(UserConfig.USER_POWER);
         session.removeAttribute(UserConfig.USER_NAME);
         return "login out ok!";
     }
 
-    @PostMapping(value = "/user/add_user")
+    @PostMapping(value = "/add_user")
     public String addUser(@RequestParam("name")String name,
                           @RequestParam("password")String password,
                           @RequestParam("power")Integer powerInteger,
@@ -71,7 +72,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/user/change_password")
+    @PostMapping(value = "/change_password")
     public String changePassword(@RequestParam("name")String name,
                                  @RequestParam("old_password")String oldPassword,
                                  @RequestParam("new_password")String newPassword,
@@ -94,7 +95,7 @@ public class UserController {
         return "密码修改成功！";
     }
 
-    @PostMapping(value = "/user/change_power")
+    @PostMapping(value = "/change_power")
     public String modifyPower(@RequestParam("name")String name,
                               @RequestParam("power")Integer powerInteger,
                               HttpSession session){
@@ -113,10 +114,10 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "/user/get_all_user_message")
+    @GetMapping(value = "/get_all_user_message")
     public List<User> getAllUserMessage(HttpSession session){
         if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.ADMIN)){
-            return null;
+            return new ArrayList<User>();
         }else {
             return userRepository.findAll();
         }

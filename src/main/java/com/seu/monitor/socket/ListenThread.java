@@ -3,7 +3,6 @@ package com.seu.monitor.socket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.PublicKey;
 
 public class ListenThread extends Thread{
     ServerSocket serverSocket;
@@ -18,7 +17,7 @@ public class ListenThread extends Thread{
                 SocketProcessThread socketProcessThread = new SocketProcessThread(socket);
                 socketProcessThread.start();
             }catch (IOException e){
-                System.out.println("socket accept fail");
+                System.out.println("socket accept fail！");
             }
         }
     }
