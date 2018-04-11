@@ -2,6 +2,7 @@ package com.seu.monitor.socket;
 
 import com.seu.monitor.config.ComponentConfig;
 import com.seu.monitor.config.SocketConfig;
+import com.seu.monitor.utils.MachineUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -18,12 +19,14 @@ import static com.seu.monitor.config.ComponentConfig.componentUnits;
 public class ReceiveFormChangeThread extends Thread {
     private InputStream inputStream;
     private Socket socket;
+    private String machineIdentifier;
     public List<String> messageListFromMachine = new ArrayList<String>();
 
     public ReceiveFormChangeThread() {}
 
-    public ReceiveFormChangeThread(Socket socket) {
+    public ReceiveFormChangeThread(Socket socket, String machineIdentifier) {
         this.socket = socket;
+        this.machineIdentifier = machineIdentifier;
         System.out.println("Receive message form change thread start!");
     }
 
@@ -80,6 +83,9 @@ public class ReceiveFormChangeThread extends Thread {
             //进入接收的数据格式转换
             while (true){
 
+                //每个循环中，
+                //读数据->判断起始标志->按序号解析数据->判断是否帧结束
+
                 //读取一个float数的四个字节
                 for(int i = 0;i < 4; i++){
                     int x = inputStream.read();
@@ -103,9 +109,16 @@ public class ReceiveFormChangeThread extends Thread {
                     continue;
                 }
 
+
                 //进行数据转化
                 if(startStatus == true){
                     index++;
+                    //如果是设备状态数据
+                    if(index == ComponentConfig.machineStatusNum){
+                        data = byte4ToFloat(temp);
+                        MachineUtils.changeStatus(machineIdentifier,data + "");
+                        continue;
+                    }
                     String str = componentIdentifiers[index - 1];
                     //System.out.println(str);
                     str += " N ";
@@ -118,6 +131,8 @@ public class ReceiveFormChangeThread extends Thread {
                     //System.out.println(messageListFromMachine.size()+
                       //      ":"+messageListFromMachine.get(0));
                 }
+
+                //一帧结束
                 if(index >= componentIdentifiers.length){
                     index = 0;
                     startStatus = false;
@@ -136,7 +151,13 @@ public class ReceiveFormChangeThread extends Thread {
     }
 
     public void run(){
-        ReceiveFormChangeFromFloat();
+        try {
+            ReceiveFormChangeFromFloat();
+        }catch (Exception e){
+            e.getStackTrace();
+        }finally {
+            System.out.println("Receive message form change thread end!");
+        }
     }
 
 /*

@@ -5,15 +5,37 @@ import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.socket.ReceiveFormChangeThread;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.seu.monitor.socket.SendFormChangeThread;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class TestSomeFun {
     public static void main(String[] args) {
-        test4();
+        test6();
     }
 
+    public static void test6(){
+        String testString = "01 TJF1 K 54 %";
+        SendFormChangeThread.messageListToMachine.add(testString);
+        SendFormChangeThread.messageListToMachine.add(testString);
+        System.out.println(SendFormChangeThread.messageListToMachine.size());
+        SendFormChangeThread.messageListToMachine.remove(0);
+        System.out.println(SendFormChangeThread.messageListToMachine.size());
+        //SendFormChangeThread sendChangeThread = new SendFormChangeThread(null,"01");
+        //sendChangeThread.run();
+
+    }
+
+    private static void test5(){
+        int x = (int)ComponentConfig.SEND_IDENTIFIER_MAP.get("M1");
+        byte b = (byte)x;
+        System.out.println(b);
+        System.out.println(x);
+
+    }
     private static void test4(){
         String str = DigestUtils.md5Hex(MachineConfig.firstMachineIdentifier);
         System.out.println(str);

@@ -9,10 +9,11 @@ import javax.persistence.Table;
 @Table(name = "machine")
 public class Machine {
 
+    @Id
     @GeneratedValue
-    private Integer id;
+    private Integer id;//改成id（序号）为主键
 
-    @Id private String identifier;//设备标志符，主键
+    private String identifier;//标志符唯一
 
     private String name;
 
@@ -22,7 +23,7 @@ public class Machine {
 
     private String imagePath;
    
-    private String identityCode;//设备身份码，用语识别PLC,主键
+    private String identityCode;//设备身份码，用语识别PLC,唯一
 
 	private String status;//8
 

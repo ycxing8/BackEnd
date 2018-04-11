@@ -15,6 +15,9 @@ public class UserConfig {
     public final static Integer SPECIAL_USER_INTEGER = 1;
     public final static Integer NORMAL_USER_INTEGER = 2;
 
+    public final static String ROOT_USER = "root";
+    public final static String ROOT_PASSWORD = "root";
+
     public final static String ALL_MACHINE = "all";
     //user can control machine which identifier in user's machineIdentifiers.
     // Each machine identifier use ";" to flag the end.

@@ -1,5 +1,7 @@
 package com.seu.monitor.utils;
 
+import com.seu.monitor.config.ComponentConfig;
+import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.entity.ComponentLog;
 import com.seu.monitor.entity.composite.ComponentCompositeKey;
 import com.seu.monitor.repository.ComponentRepository;
@@ -60,5 +62,33 @@ public class ComponentUtils {
         }
         return false;
     }
+
+
+    //没有检查这个设备的组件是否已经添加，可能存在困扰
+    public static boolean addAMachineComponent(String machineIdentifier){
+
+        //设备MACHINE项不加入component表
+        for(Integer i = 1; i < ComponentConfig.componentIdentifiers.length; i++){
+            com.seu.monitor.entity.Component component = new com.seu.monitor.entity.Component();
+            ComponentCompositeKey componentCompositeKey = new ComponentCompositeKey();
+            componentCompositeKey.setMachineIdentifier(machineIdentifier);
+            componentCompositeKey.setIdentifier(ComponentConfig.componentIdentifiers[i]);
+            component.setPk(componentCompositeKey);
+            component.setId(i);
+
+            List<com.seu.monitor.entity.Component> componentList =
+                    componentUtils.componentRepository.findByPkMachineIdentifierAndPkIdentifier(
+                            MachineConfig.firstMachineIdentifier,ComponentConfig.componentIdentifiers[i]);
+            if(componentList.size() > 0){
+                component.setKind(componentList.get(0).getKind());
+                component.setName(componentList.get(0).getName());
+                component.setDescription(componentList.get(0).getDescription());
+                component.setUnit(componentList.get(0).getUnit());
+            }
+            componentUtils.componentRepository.save(component);
+        }
+        return true;
+    }
+
 
 }

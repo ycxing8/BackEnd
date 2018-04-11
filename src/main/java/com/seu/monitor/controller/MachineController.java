@@ -3,21 +3,38 @@ package com.seu.monitor.controller;
 import com.seu.monitor.config.UserConfig;
 import com.seu.monitor.entity.Machine;
 import com.seu.monitor.repository.MachineRepository;
+import com.seu.monitor.socket.SendFormChangeThread;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/api/machine")
 public class MachineController {
 
     @Autowired
     private MachineRepository machineRepository;
+
+    @PostMapping(value = "/control_machine")
+    public String controlMachine(@RequestParam("identifier")String identifier,
+    @RequestParam("control_word")String controlWord,
+    HttpSession session){
+        if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.ADMIN)){
+            return "你没有足够权限！";
+        }
+        List<Machine> machineList = machineRepository.findByIdentifier(identifier);
+        if(machineList.size() == 0){
+            return "没有该设备！";
+        }
+        synchronized(SendFormChangeThread.messageListToMachine){
+            controlWord = identifier + " " + controlWord;
+            SendFormChangeThread.messageListToMachine.add(controlWord);
+        }
+        return "OK!";
+    }
 /*
     @PostMapping(value = "/machine/add_machine")
     public String addMachine(

@@ -8,8 +8,10 @@ import com.seu.monitor.entity.ComponentLog;
 import com.seu.monitor.entity.Machine;
 import com.seu.monitor.utils.MachineUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import static com.seu.monitor.utils.ComponentLogUtils.addComponentLog;
 import static com.seu.monitor.utils.ComponentUtils.modifyComponentRealTimeData;
@@ -17,6 +19,9 @@ import static com.seu.monitor.utils.ComponentUtils.modifyComponentRealTimeData;
 public class SocketProcessThread extends Thread{
 
     private Socket socket;
+    private String machineIdentifier;
+
+    private static List<String> onlineMachineIdentifiers = new ArrayList<String>();
 
     public SocketProcessThread(Socket socket) {
         this.socket = socket;
@@ -28,7 +33,7 @@ public class SocketProcessThread extends Thread{
 
         BufferedReader br = null;
         PrintWriter pw = null;
-        String machineIdentifier;
+        //boolean status = false;
 
         try {
             br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -39,7 +44,9 @@ public class SocketProcessThread extends Thread{
             String identityCode = br.readLine();//readLine会堵塞，直到遇到‘\n’
             System.out.println("Machine: " + identityCode + " connect");
 
+            //进行身份验证
             Machine machine = MachineUtils.machineUtils.findByMachineIdentityCode(identityCode);
+            //身份验证正确
             if(machine != null){
                 machineIdentifier = machine.getIdentifier();
                 System.out.println("Machine identity correct;" +
@@ -49,11 +56,35 @@ public class SocketProcessThread extends Thread{
                 pw.println("Correct identity!");
                 pw.flush();
 
-                ReceiveFormChangeThread receiveFormChangeThread = new ReceiveFormChangeThread(socket);
+                //判断是否该设备已在线
+              /*  synchronized(onlineMachineIdentifiers) {
+                    for (int i = 0; i < onlineMachineIdentifiers.size(); i++){
+                        if(onlineMachineIdentifiers.get(i).equals(machineIdentifier)){
+                            //如果设备已在线，则return，程序将执行final段
+                            System.out.println("machine already exist.");
+                            pw.println("machine already exist.");
+                            pw.flush();
+                            status = false;
+                            return;
+
+                        }
+                    }
+                    //该设备没有已经在线
+                    onlineMachineIdentifiers.add(machineIdentifier);
+                    status = true;
+                }*/
+
+                //打开数据收发格式转换线程
+                ReceiveFormChangeThread receiveFormChangeThread = new ReceiveFormChangeThread(socket, machineIdentifier);
                 receiveFormChangeThread.start();
 
+                SendFormChangeThread sendFormChangeThread = new SendFormChangeThread(socket,machineIdentifier);
+                sendFormChangeThread.start();
+
+                //将接收数据存入数据库
                 while (true){
-                    sleep(1);
+
+                    //如果消息队列有数据，存入数据库
                     if(receiveFormChangeThread.messageListFromMachine != null &&
                             receiveFormChangeThread.messageListFromMachine.size() != 0){
                         String str = receiveFormChangeThread.messageListFromMachine.get(0);
@@ -103,10 +134,16 @@ public class SocketProcessThread extends Thread{
                             }
                         }
 
+                    }else{
+                        //避免扫描太快，占用多CPU计算时间
+                        //如果消息队列没有数据，则等待
+                        //有，则连续扫描
+                        sleep(10);
                     }
 
 
                 }
+
 
 
             } else {
@@ -118,6 +155,14 @@ public class SocketProcessThread extends Thread{
             System.out.println("One socket use to connect machine disconnect");
             e.getStackTrace();
         }finally {
+            /*synchronized(onlineMachineIdentifiers) {
+                for (int i = 0; i < onlineMachineIdentifiers.size(); i++){
+                    if(status && onlineMachineIdentifiers.get(i).equals(machineIdentifier)){
+                        onlineMachineIdentifiers.remove(i);
+                        break;
+                    }
+                }
+            }*/
             try{
                 br.close();
                 pw.close();
@@ -131,6 +176,7 @@ public class SocketProcessThread extends Thread{
 
     }
 
+}
 /*   //以读行的方式进行字符串操作
     public void run() {
 
@@ -235,4 +281,3 @@ public class SocketProcessThread extends Thread{
         }
 
     }*/
-}

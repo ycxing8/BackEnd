@@ -8,11 +8,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user")
 public class User {
-
+    @Id
     @GeneratedValue
-    private Integer id;
+    private Integer id;//主键
 
-    @Id private String name;//用户名，主键
+    private String name;//用户名，主唯一
 
     private String password;
 
@@ -34,7 +34,7 @@ public class User {
         return name;
     }
 
-    public void setName(String Name) {
+    public void setName(String name) {
         this.name = name;
     }
 

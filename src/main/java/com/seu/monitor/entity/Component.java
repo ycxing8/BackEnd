@@ -10,7 +10,6 @@ import java.io.Serializable;
 @Table(name = "component")
 public class Component implements Serializable {//部件，包括：传感器、阀门、电机、累计量
 
-    @GeneratedValue
     private Integer id;
    // @Id private String machineIdentifier;//设备标志符和组件标志符一起为联合主键
    // @Id private String identifier;////允许多个组件拥有相同的标志符

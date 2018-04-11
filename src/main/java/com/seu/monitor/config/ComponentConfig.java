@@ -3,7 +3,9 @@ package com.seu.monitor.config;
 import com.seu.monitor.entity.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ComponentConfig {
     /*public static final List<String> componentIdentifierList =
@@ -26,6 +28,9 @@ public class ComponentConfig {
             "PWF1","PWF2"//单次产水
             };
 
+    //设备状态数据所在序号
+    public static final Integer machineStatusNum = 1;
+
     //各单位数据个数与前面数据之和
     public static final Integer[] componentNum = {
     1, //N
@@ -44,5 +49,31 @@ public class ComponentConfig {
 
     };
     public static final String defaultUnit ="N";
+
+    public static final Map SEND_IDENTIFIER_MAP = new HashMap(){{
+        put("MACHINE",1);
+        put("KGF1",2);
+        put("KGF2",3);
+        put("KGF3",4);
+        put("KGF4",5);
+        put("KGF5",6);
+        put("KGF6",7);
+        put("KGF7",8);
+        put("KGF8",9);
+        put("KGF9",10);
+        put("TJF1",11);
+        put("TJF2",12);
+        put("TJF3",13);
+        put("TJF4",14);
+        put("TJF5",15);
+        put("TJF6",16);
+        put("TJF7",17);
+        put("TJF8",18);
+        put("M1",19);
+        put("M2",20);
+        put("M3",21);
+        put("M4",22);
+        put("M5",23);
+    }};
 
 }

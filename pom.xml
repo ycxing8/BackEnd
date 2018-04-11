@@ -72,8 +72,9 @@
 
 		<!--计算MD5,BASE64 等-->
 		<dependency>
-		<groupId>org.apache.commons</groupId>
-		<artifactId>codec</artifactId>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.10</version>
 		</dependency>
 
 	</dependencies>

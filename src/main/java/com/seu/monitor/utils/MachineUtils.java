@@ -3,7 +3,9 @@ package com.seu.monitor.utils;
 import com.seu.monitor.config.ComponentConfig;
 import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.entity.Machine;
+import com.seu.monitor.repository.ComponentRepository;
 import com.seu.monitor.repository.MachineRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,14 +38,39 @@ public class MachineUtils {
         }
     }
 
+    public static boolean ifMachine(String identifier){
+        List<Machine> machineList = machineUtils.machineRepository.findByIdentifier(identifier);
+        if(machineList.size() > 0){
+            return true;
+        }
+        return false;
+    }
 
     public static void createFirstMachine(){
         if(machineUtils.machineRepository.findAll().size() == 0){
             Machine machine = new Machine();
             machine.setIdentifier(MachineConfig.firstMachineIdentifier);
-
+            machine.setIdentityCode(DigestUtils.md5Hex(MachineConfig.firstMachineIdentifier));
+            machineUtils.machineRepository.save(machine);
+            ComponentUtils.addAMachineComponent(MachineConfig.firstMachineIdentifier);
+        }else {
+            System.out.println("First machine already exist.");
         }
 
     }
+
+
+    public static boolean changeStatus(String identifier,String status){
+        if(machineUtils.machineRepository.findByIdentifier(identifier).size() > 0){
+            Machine machine = machineUtils.machineRepository.findByIdentifier(identifier).get(0);
+            machine.setStatus(status);
+            machineUtils.machineRepository.save(machine);
+            return true;
+        }
+        System.out.println("this machine do not exist.");
+        return false;
+    }
+
+
 
 }
