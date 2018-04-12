@@ -8,10 +8,8 @@ import com.seu.monitor.entity.ComponentLog;
 import com.seu.monitor.entity.Machine;
 import com.seu.monitor.utils.MachineUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import static com.seu.monitor.utils.ComponentLogUtils.addComponentLog;
 import static com.seu.monitor.utils.ComponentUtils.modifyComponentRealTimeData;
@@ -21,7 +19,35 @@ public class SocketProcessThread extends Thread{
     private Socket socket;
     private String machineIdentifier;
 
-    private static List<String> onlineMachineIdentifiers = new ArrayList<String>();
+    public static Map socketProcessThreadMap = new HashMap();
+
+    private static Map onlineMachineMap = new HashMap();
+    //private static List<String> onlineMachineIdentifiers = new ArrayList<String>();
+
+    public static boolean judgeOnline(String machineIdentifier){
+        synchronized (onlineMachineMap){
+            return (boolean)onlineMachineMap.get(machineIdentifier);
+        }
+    }
+    private void otherSameMachineSignOut(){
+        if(!onlineMachineMap.containsKey(machineIdentifier)){
+            synchronized (onlineMachineMap) {
+                onlineMachineMap.put(machineIdentifier, true);
+            }
+        }else{
+            synchronized (onlineMachineMap) {
+                onlineMachineMap.put(machineIdentifier, false);
+            }
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (onlineMachineMap) {
+                onlineMachineMap.put(machineIdentifier, true);
+            }
+        }
+    }
 
     public SocketProcessThread(Socket socket) {
         this.socket = socket;
@@ -73,7 +99,10 @@ public class SocketProcessThread extends Thread{
                     onlineMachineIdentifiers.add(machineIdentifier);
                     status = true;
                 }*/
-
+                otherSameMachineSignOut();
+                synchronized (socketProcessThreadMap) {
+                    socketProcessThreadMap.put(this.toString(), machineIdentifier);
+                }
                 //打开数据收发格式转换线程
                 ReceiveFormChangeThread receiveFormChangeThread = new ReceiveFormChangeThread(socket, machineIdentifier);
                 receiveFormChangeThread.start();
@@ -81,8 +110,9 @@ public class SocketProcessThread extends Thread{
                 SendFormChangeThread sendFormChangeThread = new SendFormChangeThread(socket,machineIdentifier);
                 sendFormChangeThread.start();
 
+
                 //将接收数据存入数据库
-                while (true){
+                while (judgeOnline(machineIdentifier)){
 
                     //如果消息队列有数据，存入数据库
                     if(receiveFormChangeThread.messageListFromMachine != null &&
@@ -155,18 +185,14 @@ public class SocketProcessThread extends Thread{
             System.out.println("One socket use to connect machine disconnect");
             e.getStackTrace();
         }finally {
-            /*synchronized(onlineMachineIdentifiers) {
-                for (int i = 0; i < onlineMachineIdentifiers.size(); i++){
-                    if(status && onlineMachineIdentifiers.get(i).equals(machineIdentifier)){
-                        onlineMachineIdentifiers.remove(i);
-                        break;
-                    }
-                }
-            }*/
+            synchronized(socketProcessThreadMap) {
+                socketProcessThreadMap.remove(this.toString());
+            }
             try{
                 br.close();
                 pw.close();
                 socket.close();
+                System.out.println("close this socket.");
             }catch (Exception e){
                 System.out.println("One socket can't be close");
                 e.getStackTrace();

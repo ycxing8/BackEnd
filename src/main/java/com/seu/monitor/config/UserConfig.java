@@ -39,8 +39,7 @@ public class UserConfig {
                 return true;
             }
         }else if(needPower.equals(SPECIAL_USER)){
-            if(power.equals(ADMIN)||
-                    power.equals(SPECIAL_USER)){
+            if(power.equals(SPECIAL_USER)){
                 return true;
             }
         }else if(needPower.equals(NORMAL_USER)){

@@ -13,6 +13,8 @@ public interface ComponentRepository extends JpaRepository<Component,ComponentCo
                                                             String identifier);*/
     List<Component> findByPkIdentifier(String identifier);
 
+    List<Component> findByPkMachineIdentifier(String machineIdentifier);
+
     List<Component> findByPkMachineIdentifierAndPkIdentifier(String machineIdentifier,
                                                              String identifier);
 

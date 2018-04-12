@@ -7,17 +7,12 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   mvc:
     favicon:
       enabled: false
 
 server:
   port: 8081
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: SEUwlt
-    key-store-type: PKCS12
-    key-alias: hpgary
 
 

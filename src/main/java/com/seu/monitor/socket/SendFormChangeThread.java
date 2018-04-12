@@ -1,17 +1,21 @@
 package com.seu.monitor.socket;
 
 import com.seu.monitor.config.ComponentConfig;
-
+import com.seu.monitor.socket.SocketProcessThread;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SendFormChangeThread extends Thread {
     private Socket socket;
     private String machineIdentifier;
     public static List<String> messageListToMachine = new ArrayList<String>();
     private OutputStream outputStream = null;
+
+    public static Map sendFormChangeThreadMap = new HashMap();
 
     public SendFormChangeThread(Socket socket, String machineIdentifier){
         this.socket = socket;
@@ -21,8 +25,22 @@ public class SendFormChangeThread extends Thread {
     }
 
     //public SendFormChangeThread(){}
-
     public void run(){
+        synchronized (sendFormChangeThreadMap) {
+            sendFormChangeThreadMap.put(this.toString(), machineIdentifier);
+        }
+        try{
+            sendFormChange();
+        }catch (Exception e){
+            e.getStackTrace();
+        }finally {
+            System.out.println("send form change thread stop.");
+            synchronized (sendFormChangeThreadMap) {
+                sendFormChangeThreadMap.remove(this.toString());
+            }
+        }
+    }
+    public void sendFormChange(){
         if(outputStream == null){
             try {
                 outputStream = socket.getOutputStream();
@@ -38,9 +56,9 @@ public class SendFormChangeThread extends Thread {
         //1.扫描List,找到一个发与本设备的消息中，或者找不到，（此过程同步）
         //2.找到则格式转换然后发出去，找不到则下一步
         //3.等待100ms
-        byte[] temp = new byte[3];
+        byte[] temp = new byte[4];
 
-        while (true){
+        while (SocketProcessThread.judgeOnline(machineIdentifier)){
             /*for(int i = 0; i < messageListToMachine.size(); i++) {
                 String message = messageListToMachine.get(i);
                 System.out.println(message);
@@ -63,13 +81,55 @@ public class SendFormChangeThread extends Thread {
                     // 0      1       2
                     //部件 状态  数据
                     String [] arr = message.split("\\s+");
-                    //System.out.println(arr[0]);
+                    int index = 0;
+                    boolean status = false;
+                    for(String ss :arr){
+
+                        switch (index){
+                            case 0:
+                                if(machineIdentifier.equals(arr[0])) {
+                                    messageListToMachine.remove(i);
+                                    status = true;
+                                }
+                                break;
+                            case 1:
+                                temp[0] = (byte)(int)ComponentConfig.SEND_IDENTIFIER_MAP.get(arr[1]);
+                                break;
+                            case 2:
+                                switch (arr[2]){
+                                    case "K":
+                                        temp[1] = 75;//K的ASCII
+                                        break;
+                                    case "G":
+                                        temp[1] = 71; //G的ASCII
+                                        break;
+                                    default:
+                                        temp[1] = 0;
+                                }
+                                break;
+                            case 3:
+                                try {
+                                    int anInt = Integer.parseInt(arr[3]);
+                                    if(temp[0] >= ComponentConfig.needChange[0]&&
+                                            temp[0]<= ComponentConfig.needChange[1]){
+                                        anInt = openingTransform(anInt);
+                                    }
+                                    temp[3] = (byte)anInt;
+                                    temp[2] = (byte)(anInt/256);
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                        }
+                        index++;
+                    }
+                  /*  //System.out.println(arr[0]);
                     //System.out.println(arr[1]);
                     //System.out.println(arr[2]);
                     //System.out.println(arr[3]);
                     if(machineIdentifier.equals(arr[0])){
                         messageListToMachine.remove(i);
-                        System.out.println(messageListToMachine.size());
+                        //System.out.println(messageListToMachine.size());
 
                         temp[0] = (byte)(int)ComponentConfig.SEND_IDENTIFIER_MAP.get(arr[1]);
                         switch (arr[2]){
@@ -87,9 +147,13 @@ public class SendFormChangeThread extends Thread {
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
+                        */
+
+                    if(status == true) {
                         System.out.println(temp[0]&0xff);
                         System.out.println(temp[1]&0xff);
                         System.out.println(temp[2]&0xff);
+                        System.out.println(temp[3]&0xff);
 
                         try{
                             outputStream.write(temp);
@@ -97,10 +161,10 @@ public class SendFormChangeThread extends Thread {
                         }catch (Exception e){
                             e.getStackTrace();
                         }
-
                         //如果找到，则break
-                       break;
+                        break;
                     }
+
                 }
             }
 
@@ -114,9 +178,10 @@ public class SendFormChangeThread extends Thread {
 
         }
 
-
-
     }
 
+    private int openingTransform(int opening){
+        return (int)(opening*221.18+5530);
+    }
 
 }

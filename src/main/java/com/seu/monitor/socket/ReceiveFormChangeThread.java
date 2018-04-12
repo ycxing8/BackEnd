@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.seu.monitor.config.ComponentConfig.componentIdentifiers;
 import static com.seu.monitor.config.ComponentConfig.componentUnits;
@@ -21,14 +23,29 @@ public class ReceiveFormChangeThread extends Thread {
     private Socket socket;
     private String machineIdentifier;
     public List<String> messageListFromMachine = new ArrayList<String>();
-
-    public ReceiveFormChangeThread() {}
+    public static Map receiveFormChangeThreadMap = new HashMap();
 
     public ReceiveFormChangeThread(Socket socket, String machineIdentifier) {
         this.socket = socket;
         this.machineIdentifier = machineIdentifier;
         System.out.println("Receive message form change thread start!");
     }
+    public void run(){
+        try {
+            synchronized (receiveFormChangeThreadMap){
+                receiveFormChangeThreadMap.put(this.toString(),machineIdentifier);
+            }
+            ReceiveFormChangeFromFloat();
+        }catch (Exception e){
+            e.getStackTrace();
+        }finally {
+            System.out.println("Receive message form change thread stop.");
+            synchronized (receiveFormChangeThreadMap){
+                receiveFormChangeThreadMap.remove(this.toString());
+            }
+        }
+    }
+
 
     public float byte4ToFloat(byte[] b) {
         //byte[] b = {0,(byte)0,0,0};
@@ -81,7 +98,7 @@ public class ReceiveFormChangeThread extends Thread {
             float data = 0;
 
             //进入接收的数据格式转换
-            while (true){
+            while (SocketProcessThread.judgeOnline(machineIdentifier)){
 
                 //每个循环中，
                 //读数据->判断起始标志->按序号解析数据->判断是否帧结束
@@ -150,15 +167,6 @@ public class ReceiveFormChangeThread extends Thread {
 
     }
 
-    public void run(){
-        try {
-            ReceiveFormChangeFromFloat();
-        }catch (Exception e){
-            e.getStackTrace();
-        }finally {
-            System.out.println("Receive message form change thread end!");
-        }
-    }
 
 /*
     public void run(){

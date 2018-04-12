@@ -45,14 +45,16 @@ public class MachineUtils {
         }
         return false;
     }
-
     public static void createFirstMachine(){
+        createAMachine(MachineConfig.firstMachineIdentifier);
+    }
+    public static void createAMachine(String machineIdentifier){
         if(machineUtils.machineRepository.findAll().size() == 0){
             Machine machine = new Machine();
-            machine.setIdentifier(MachineConfig.firstMachineIdentifier);
-            machine.setIdentityCode(DigestUtils.md5Hex(MachineConfig.firstMachineIdentifier));
+            machine.setIdentifier(machineIdentifier);
+            machine.setIdentityCode(DigestUtils.md5Hex(machineIdentifier));
             machineUtils.machineRepository.save(machine);
-            ComponentUtils.addAMachineComponent(MachineConfig.firstMachineIdentifier);
+            ComponentUtils.addAMachineComponent(machineIdentifier);
         }else {
             System.out.println("First machine already exist.");
         }

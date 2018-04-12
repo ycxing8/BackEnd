@@ -4,28 +4,59 @@ import com.seu.monitor.config.ComponentConfig;
 import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.socket.ReceiveFormChangeThread;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.*;
 
 import com.seu.monitor.socket.SendFormChangeThread;
+import com.seu.monitor.socket.SocketProcessThread;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class TestSomeFun {
     public static void main(String[] args) {
-        test6();
+        test7();
     }
 
+    public static void test8(){
+        try {
+           System.out.println("run here.");
+        }catch (Exception e){
+            e.getStackTrace();
+        }finally {
+            System.out.println("Receive message form change thread end!");
+        }
+    }
+    public static void test7(){
+        Map map = new HashMap();
+        map.put("01",true);
+        map.put("02",true);
+        map.put("03",false);
+        System.out.println(map);
+        map.remove("02");
+        System.out.println(map);
+        boolean b =(boolean)map.get("01");
+        System.out.println(b);
+    }
     public static void test6(){
-        String testString = "01 TJF1 K 54 %";
-        SendFormChangeThread.messageListToMachine.add(testString);
-        SendFormChangeThread.messageListToMachine.add(testString);
-        System.out.println(SendFormChangeThread.messageListToMachine.size());
-        SendFormChangeThread.messageListToMachine.remove(0);
-        System.out.println(SendFormChangeThread.messageListToMachine.size());
-        //SendFormChangeThread sendChangeThread = new SendFormChangeThread(null,"01");
-        //sendChangeThread.run();
+        String testString = "01 TJF1 K ";
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int num = 0;
+        while (true) {
+            String str = null;
+            try {
+                str = br.readLine();
+                num += 1;
+                String message = testString + num + " %";
+                System.out.println(num);
+                SendFormChangeThread.messageListToMachine.add(message);
+                System.out.println(SocketProcessThread.judgeOnline("01"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -42,7 +73,7 @@ public class TestSomeFun {
     }
 
     private static void test3(){
-        ReceiveFormChangeThread formChangeThread = new ReceiveFormChangeThread();
+        ReceiveFormChangeThread formChangeThread = new ReceiveFormChangeThread(new Socket(),"01");
         for(int i = 0; i <= ComponentConfig.componentIdentifiers.length; i++){
             System.out.println(i+": "+ formChangeThread.getUnit(i));
         }
@@ -66,7 +97,7 @@ public class TestSomeFun {
     private static void test1(){
         byte[] x = {1,2,3,4};
         byte[] y = {1,2,3,4};
-        ReceiveFormChangeThread formChangeThread = new ReceiveFormChangeThread();
+        ReceiveFormChangeThread formChangeThread = new ReceiveFormChangeThread(new Socket(),"01");
         System.out.println(formChangeThread.bytesEquals(x, y));
     }
 
@@ -77,7 +108,7 @@ public class TestSomeFun {
         b[1] = (byte)65;
         b[2] = (byte)194;
         b[3] = (byte)143;
-        ReceiveFormChangeThread formChangeThread = new ReceiveFormChangeThread();
+        ReceiveFormChangeThread formChangeThread = new ReceiveFormChangeThread(new Socket(),"01");
         System.out.println(formChangeThread.byte4ToFloat(b));
     }
 

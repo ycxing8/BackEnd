@@ -18,7 +18,6 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-
     @PostMapping(value = "/login")
     public String loginTest(@RequestParam("name")String name,
                             @RequestParam("password")String password,

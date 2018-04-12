@@ -75,6 +75,8 @@ public class ComponentUtils {
             componentCompositeKey.setIdentifier(ComponentConfig.componentIdentifiers[i]);
             component.setPk(componentCompositeKey);
             component.setId(i);
+            component.setName(ComponentConfig.componentNames[i]);
+            component.setKind(getKind(i));
 
             List<com.seu.monitor.entity.Component> componentList =
                     componentUtils.componentRepository.findByPkMachineIdentifierAndPkIdentifier(
@@ -82,7 +84,7 @@ public class ComponentUtils {
             if(componentList.size() > 0){
                 component.setKind(componentList.get(0).getKind());
                 component.setName(componentList.get(0).getName());
-                component.setDescription(componentList.get(0).getDescription());
+                //component.setDescription(componentList.get(0).getDescription());
                 component.setUnit(componentList.get(0).getUnit());
             }
             componentUtils.componentRepository.save(component);
@@ -90,5 +92,14 @@ public class ComponentUtils {
         return true;
     }
 
+    private static String getKind(int index){
+        for(Integer i = 0; i < ComponentConfig.componentNum.length; i++){
+            if(index < ComponentConfig.componentNum[i]) {
+                return ComponentConfig.componentKinds[i];
+            }
+        }
+
+        return ComponentConfig.defaultKind;
+    }
 
 }

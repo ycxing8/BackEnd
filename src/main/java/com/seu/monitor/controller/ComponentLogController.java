@@ -19,7 +19,7 @@ public class ComponentLogController {
     @Autowired
     private ComponentLogRepository componentLogRepository;
 
-    @PostMapping(value = "/component_log/get_component_log")
+    @PostMapping(value = "api/component_log/get_component_log")
     public List<ComponentLog> getComponentLog(@RequestParam("component_identifier")String componentIdentifier,
                                               @RequestParam("machine_identifier")String machineIdentifier,
                                               HttpSession session){

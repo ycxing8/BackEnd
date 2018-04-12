@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>运行数据</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <script>
+        function loadXMLDoc()
+        {
+            var xmlhttp;
+            if (window.XMLHttpRequest)
+            {
+                //  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {
+                // IE6, IE5 浏览器执行代码
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+                }
+            }
+            xmlhttp.open("GET","/api/machine/get_all",true);
+            xmlhttp.send();
+        }
+    </script>
+</head>
+<body>
+    <form action="/api/component/get_by_machine_identifier" method="post">
+        <input type="text" name="machine_identifier">
+        <input type="submit" value="获取">
+    </form>
+
+
+    <div id="myDiv"><h2>使用 AJAX 修改</h2></div>
+    <button type="button" onclick="loadXMLDoc()">修改内容</button>
+
+</body>
+</html>

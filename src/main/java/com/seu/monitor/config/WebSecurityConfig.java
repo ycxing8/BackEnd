@@ -17,7 +17,6 @@ import java.io.IOException;
  */
 @Configuration
 public class WebSecurityConfig extends WebMvcConfigurerAdapter{
-    //public final static String SESSION_KEY = "userName";
 
     @Bean
     public SecurityInterceptor getSecurityInterceptor(){
@@ -38,13 +37,13 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter{
             HttpSession session = request.getSession();
 
 //            判断是否已有该用户登录的session
-            if(session.getAttribute(SESSION_KEY) != null){
+            if(session.getAttribute(UserConfig.USER_NAME) != null){
                 return true;
             }
 
 //            跳转到登录页
-            //String url = "2.html";
-            //response.sendRedirect(url);
+            String url = "redirect:login.html";
+            response.sendRedirect(url);
             return false;
         }
     }*/
