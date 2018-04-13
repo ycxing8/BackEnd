@@ -1,6 +1,7 @@
 package com.seu.monitor.controller;
 
 import com.seu.monitor.config.ComponentConfig;
+import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.config.UserConfig;
 import com.seu.monitor.entity.Machine;
 import com.seu.monitor.entity.Operation;
@@ -77,7 +78,10 @@ public class MachineController {
                         controlWord = ComponentConfig.sendIdentifiers[temp - 1];
                         break;
                     case 1:
-                        if(ss.equals("G")){
+                        if(Integer.parseInt(arr[0]) == 1){
+                            controlWord += " "+ MachineConfig.sendMachineStatus[Integer.parseInt(arr[1])];
+
+                        }else if(ss.equals("G")){
                             controlWord += " "+ "G";
                         }else if(ss.equals("K")){
                             controlWord += " "+ "K";
@@ -108,7 +112,7 @@ public class MachineController {
         return "OK!";
     }
 
-    @PostMapping(value = "/add_machine")
+    @PostMapping(value = "/add")
     public String addMachine(@RequestParam("identifier")String identifier,
                              HttpSession session){
         if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),

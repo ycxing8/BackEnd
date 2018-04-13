@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.lang.Thread;
 
+import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.entity.ComponentLog;
 import com.seu.monitor.entity.Machine;
 import com.seu.monitor.utils.MachineUtils;
@@ -59,7 +60,6 @@ public class SocketProcessThread extends Thread{
 
         BufferedReader br = null;
         PrintWriter pw = null;
-        //boolean status = false;
 
         try {
             br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -114,12 +114,18 @@ public class SocketProcessThread extends Thread{
                 //将接收数据存入数据库
                 while (judgeOnline(machineIdentifier)){
 
-                    //如果消息队列有数据，存入数据库
-                    if(receiveFormChangeThread.messageListFromMachine != null &&
-                            receiveFormChangeThread.messageListFromMachine.size() != 0){
-                        String str = receiveFormChangeThread.messageListFromMachine.get(0);
-                        receiveFormChangeThread.messageListFromMachine.remove(0);
+                    boolean status = false;
+                    String str = null;                    //如果消息队列有数据，存入数据
+                    synchronized (receiveFormChangeThread.messageListFromMachine){
+                        if(receiveFormChangeThread.messageListFromMachine != null &&
+                                receiveFormChangeThread.messageListFromMachine.size() != 0) {
+                            str = receiveFormChangeThread.messageListFromMachine.get(0);
+                            receiveFormChangeThread.messageListFromMachine.remove(0);
+                            status = true;
+                        }
+                    }
 
+                    if(status == true){
                         //System.out.println("One log: " + str);
 
                         //such as : M1 K 30 Hz
@@ -188,6 +194,7 @@ public class SocketProcessThread extends Thread{
             synchronized(socketProcessThreadMap) {
                 socketProcessThreadMap.remove(this.toString());
             }
+            MachineUtils.changeStatus(machineIdentifier, MachineConfig.disConnect);
             try{
                 br.close();
                 pw.close();

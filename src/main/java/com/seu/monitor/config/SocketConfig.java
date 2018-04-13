@@ -13,4 +13,6 @@ public class SocketConfig {
     final public static byte[] FRAME_START_FLAG_FROM_FLOAT =
             {(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff};
 
+    final public static byte[] HEARTBEAT = {(byte)0xff,0,(byte)0xff,0};
+
 }

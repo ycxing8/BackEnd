@@ -19,9 +19,9 @@ public class ComponentLogController {
     @Autowired
     private ComponentLogRepository componentLogRepository;
 
-    @PostMapping(value = "api/component_log/get_component_log")
-    public List<ComponentLog> getComponentLog(@RequestParam("component_identifier")String componentIdentifier,
-                                              @RequestParam("machine_identifier")String machineIdentifier,
+    @PostMapping(value = "/api/component_log/get_component_log")
+    public List<ComponentLog> getComponentLog(@RequestParam("machine_identifier")String machineIdentifier,
+            @RequestParam("component_identifier")String componentIdentifier,
                                               HttpSession session){
         if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.ADMIN)){
             return null;

@@ -16,11 +16,20 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class TestSomeFun {
     public static void main(String[] args) {
-        test7();
+        test8();
     }
 
     public static void test8(){
+        String i = "1";
         try {
+            float f = (float) -0.5;
+            System.out.println(f);
+            System.out.println((int)f);
+            System.out.println(i);
+            TestSomeFun1 testx = new TestSomeFun1(i);
+            testx.changeStatus();
+            System.out.println(i);
+
            System.out.println("run here.");
         }catch (Exception e){
             e.getStackTrace();

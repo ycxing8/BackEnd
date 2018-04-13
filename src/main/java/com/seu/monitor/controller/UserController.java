@@ -51,7 +51,7 @@ public class UserController {
         return "login out ok!";
     }
 
-    @PostMapping(value = "/add_user")
+    @PostMapping(value = "/add")
     public String addUser(@RequestParam("name")String name,
                           @RequestParam("password")String password,
                           @RequestParam("power")Integer powerInteger,

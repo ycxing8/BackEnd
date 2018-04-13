@@ -1,7 +1,11 @@
 package com.seu.monitor.socket;
 
 import com.seu.monitor.config.ComponentConfig;
+import com.seu.monitor.config.MachineConfig;
+import com.seu.monitor.config.SocketConfig;
 import com.seu.monitor.socket.SocketProcessThread;
+import com.seu.monitor.utils.MachineUtils;
+
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -35,6 +39,7 @@ public class SendFormChangeThread extends Thread {
             e.getStackTrace();
         }finally {
             System.out.println("send form change thread stop.");
+            MachineUtils.changeStatus(machineIdentifier,MachineConfig.disConnect);
             synchronized (sendFormChangeThreadMap) {
                 sendFormChangeThreadMap.remove(this.toString());
             }
@@ -66,6 +71,8 @@ public class SendFormChangeThread extends Thread {
                 System.out.println(messageListToMachine.size());
             }*///for test
 
+            boolean status = false;
+
             //第一步&第2步
             synchronized(messageListToMachine){
                 for(int i = 0; i < messageListToMachine.size(); i++){
@@ -80,96 +87,89 @@ public class SendFormChangeThread extends Thread {
                     //temp说明
                     // 0      1       2
                     //部件 状态  数据
-                    String [] arr = message.split("\\s+");
-                    int index = 0;
-                    boolean status = false;
-                    for(String ss :arr){
+					try{
+						String [] arr = message.split("\\s+");
+						int index = 0;
+						for(String ss :arr){
 
-                        switch (index){
-                            case 0:
-                                if(machineIdentifier.equals(arr[0])) {
-                                    messageListToMachine.remove(i);
-                                    status = true;
-                                }
-                                break;
-                            case 1:
-                                temp[0] = (byte)(int)ComponentConfig.SEND_IDENTIFIER_MAP.get(arr[1]);
-                                break;
-                            case 2:
-                                switch (arr[2]){
-                                    case "K":
-                                        temp[1] = 75;//K的ASCII
-                                        break;
-                                    case "G":
-                                        temp[1] = 71; //G的ASCII
-                                        break;
-                                    default:
-                                        temp[1] = 0;
-                                }
-                                break;
-                            case 3:
-                                try {
-                                    int anInt = Integer.parseInt(arr[3]);
-                                    if(temp[0] >= ComponentConfig.needChange[0]&&
-                                            temp[0]<= ComponentConfig.needChange[1]){
-                                        anInt = openingTransform(anInt);
-                                    }
-                                    temp[3] = (byte)anInt;
-                                    temp[2] = (byte)(anInt/256);
-                                } catch (NumberFormatException e) {
-                                    e.printStackTrace();
-                                }
-                                break;
-                        }
-                        index++;
-                    }
-                  /*  //System.out.println(arr[0]);
-                    //System.out.println(arr[1]);
-                    //System.out.println(arr[2]);
-                    //System.out.println(arr[3]);
-                    if(machineIdentifier.equals(arr[0])){
-                        messageListToMachine.remove(i);
-                        //System.out.println(messageListToMachine.size());
+							switch (index){
+								case 0:
+									if(machineIdentifier.equals(arr[0])) {
+										messageListToMachine.remove(i);
+										status = true;
+									}
+									break;
+								case 1:
+									temp[0] = (byte)(int)ComponentConfig.SEND_IDENTIFIER_MAP.get(arr[1]);
+									break;
+								case 2:
+									if(temp[0] == 1){
+										temp[1] = (byte)(int)MachineConfig.SEND_MACHINE_STATUS_MAP.get(arr[2]);
 
-                        temp[0] = (byte)(int)ComponentConfig.SEND_IDENTIFIER_MAP.get(arr[1]);
-                        switch (arr[2]){
-                            case "K":
-                                temp[1] = 75;//K的ASCII
-                                break;
-                            case "G":
-                                temp[1] = 71; //G的ASCII
-                                break;
-                            default:
-                                temp[1] = 0;
-                        }
-                        try {
-                            temp[2] = (byte)Integer.parseInt(arr[3]);
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                        }
-                        */
+									}else {
+										switch (arr[2]) {
+											case "K":
+												temp[1] = 75;//K的ASCII
+												break;
+											case "G":
+												temp[1] = 71; //G的ASCII
+												break;
+											default:
+												temp[1] = 0;
+										}
+									}
+									break;
+								case 3:
+									try {
+										int anInt = Integer.parseInt(arr[3]);
+										if(temp[0] >= ComponentConfig.needChange[0]&&
+												temp[0]<= ComponentConfig.needChange[1]){
+											anInt = openingTransform(anInt);
+										}
+										temp[3] = (byte)anInt;
+										temp[2] = (byte)(anInt/256);
+									} catch (NumberFormatException e) {
+										e.printStackTrace();
+									}
+									break;
+							}
+							index++;
+						}
 
-                    if(status == true) {
-                        System.out.println(temp[0]&0xff);
-                        System.out.println(temp[1]&0xff);
-                        System.out.println(temp[2]&0xff);
-                        System.out.println(temp[3]&0xff);
+                        if(status == true) {
+                            System.out.println(temp[0]&0xff);
+                            System.out.println(temp[1]&0xff);
+                            System.out.println(temp[2]&0xff);
+                            System.out.println(temp[3]&0xff);
 
-                        try{
-                            outputStream.write(temp);
-                            outputStream.flush();
-                        }catch (Exception e){
-                            e.getStackTrace();
+                            try{
+                                outputStream.write(temp);
+                                outputStream.flush();
+                            }catch (Exception e){
+                                e.getStackTrace();
+                            }
+                            //如果找到，则break
+                            break;
                         }
-                        //如果找到，则break
-                        break;
-                    }
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+
 
                 }
             }
 
 
             //第3步
+            //如果没有命令，则发送心跳包
+            if(status == false) {
+                try{
+                    outputStream.write(SocketConfig.HEARTBEAT);
+                    outputStream.flush();
+                }catch (Exception e){
+                    e.getStackTrace();
+                }
+            }
             try {
                 sleep(100);
             } catch (InterruptedException e) {

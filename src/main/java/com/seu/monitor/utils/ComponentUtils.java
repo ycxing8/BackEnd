@@ -68,13 +68,13 @@ public class ComponentUtils {
     public static boolean addAMachineComponent(String machineIdentifier){
 
         //设备MACHINE项不加入component表
-        for(Integer i = 1; i < ComponentConfig.componentIdentifiers.length; i++){
+        for(Integer i = 0; i < ComponentConfig.componentIdentifiers.length; i++){
             com.seu.monitor.entity.Component component = new com.seu.monitor.entity.Component();
             ComponentCompositeKey componentCompositeKey = new ComponentCompositeKey();
             componentCompositeKey.setMachineIdentifier(machineIdentifier);
             componentCompositeKey.setIdentifier(ComponentConfig.componentIdentifiers[i]);
             component.setPk(componentCompositeKey);
-            component.setId(i);
+            component.setId(i + 1);
             component.setName(ComponentConfig.componentNames[i]);
             component.setKind(getKind(i));
 

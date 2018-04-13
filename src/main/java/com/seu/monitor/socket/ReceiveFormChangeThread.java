@@ -1,6 +1,7 @@
 package com.seu.monitor.socket;
 
 import com.seu.monitor.config.ComponentConfig;
+import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.config.SocketConfig;
 import com.seu.monitor.utils.MachineUtils;
 
@@ -40,6 +41,7 @@ public class ReceiveFormChangeThread extends Thread {
             e.getStackTrace();
         }finally {
             System.out.println("Receive message form change thread stop.");
+            MachineUtils.changeStatus(machineIdentifier,MachineConfig.disConnect);
             synchronized (receiveFormChangeThreadMap){
                 receiveFormChangeThreadMap.remove(this.toString());
             }
@@ -133,8 +135,14 @@ public class ReceiveFormChangeThread extends Thread {
                     //如果是设备状态数据
                     if(index == ComponentConfig.machineStatusNum){
                         data = byte4ToFloat(temp);
-                        MachineUtils.changeStatus(machineIdentifier,data + "");
+                        String machineStatus = getMachineStatusByNum(data);
+                        MachineUtils.changeStatus(machineIdentifier,machineStatus);
+                        synchronized (messageListFromMachine) {
+                            messageListFromMachine.add(componentIdentifiers[index - 1] + " "
+                            + machineStatus + " N  N");
+                        }
                         continue;
+
                     }
                     String str = componentIdentifiers[index - 1];
                     //System.out.println(str);
@@ -143,7 +151,9 @@ public class ReceiveFormChangeThread extends Thread {
                     //System.out.println("data:" + data);
                     str += (data + " ");//把数字转化为字符串
                     str += getUnit(index);
-                    messageListFromMachine.add(str);
+                    synchronized (messageListFromMachine) {
+                        messageListFromMachine.add(str);
+                    }
                     System.out.println(str);
                     //System.out.println(messageListFromMachine.size()+
                       //      ":"+messageListFromMachine.get(0));
@@ -165,6 +175,15 @@ public class ReceiveFormChangeThread extends Thread {
         }
 
 
+    }
+
+    private String getMachineStatusByNum(float num){
+        int index = ((int)(num + 1.5));
+        if(index >= MachineConfig.ReceiveMachineStatus.length
+                || index < 0){
+            return "NULL";
+        }
+        return MachineConfig.ReceiveMachineStatus[index];
     }
 
 
