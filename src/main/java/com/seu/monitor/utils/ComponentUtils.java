@@ -102,4 +102,29 @@ public class ComponentUtils {
         return ComponentConfig.defaultKind;
     }
 
+    public static boolean getComponentStatus(String machineIdentifier, String componentIdentifier) {
+        if(!MachineUtils.ifOnline(machineIdentifier)) {
+            return false;
+        }
+        List<com.seu.monitor.entity.Component> components =
+                componentUtils.componentRepository.findByPkMachineIdentifierAndPkIdentifier(machineIdentifier, componentIdentifier);
+        if(components.size() == 0){
+            return false;
+        }
+        com.seu.monitor.entity.Component component = components.get(0);
+        String status = component.getStatus();
+        if(status.equals(ComponentConfig.componentStatusOpen)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static String getRealTimeData(String machineIdentifier, String identifier) {
+        List<com.seu.monitor.entity.Component> components = componentUtils.componentRepository.findByPkMachineIdentifierAndPkIdentifier(machineIdentifier,identifier);
+        if(components.size() == 0) {
+            return null;
+        }
+        com.seu.monitor.entity.Component component = components.get(0);
+        return component.getRealTimeData();
+    }
 }

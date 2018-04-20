@@ -7,6 +7,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.seu.monitor.socket.*;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 @SpringBootApplication
 public class MonitoringSystemApplication {
 
@@ -16,7 +21,6 @@ public class MonitoringSystemApplication {
 		MachineUtils.createFirstMachine();
 		UserUtils.addRootUser();
 		StartSocketServer.start();
-		//TestSomeFun.test6();
-
+		TestSomeFun.test9();
 	}
 }

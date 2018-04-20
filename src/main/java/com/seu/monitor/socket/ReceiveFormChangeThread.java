@@ -146,8 +146,17 @@ public class ReceiveFormChangeThread extends Thread {
                     }
                     String str = componentIdentifiers[index - 1];
                     //System.out.println(str);
-                    str += " N ";
                     data = byte4ToFloat(temp);
+                    String status;
+                    if(index > ComponentConfig.noneStatusAfterNum || index <= ComponentConfig.haveStatusAfterNum) {
+                        status = "N";
+                    }else if(((int)data) != 0) {
+                        status = "K";
+                    }else {
+                        status = "G";
+                    }
+                    str += " " + status + " ";
+
                     //System.out.println("data:" + data);
                     str += (data + " ");//把数字转化为字符串
                     str += getUnit(index);

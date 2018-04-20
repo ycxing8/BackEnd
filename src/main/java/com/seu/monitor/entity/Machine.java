@@ -27,7 +27,17 @@ public class Machine {
 
 	private String status;//8
 
+    private String lastOnlineTime;
+
     public Machine(){}
+
+    public String getLastOnlineTime() {
+        return lastOnlineTime;
+    }
+
+    public void setLastOnlineTime(String lastOnlineTime) {
+        this.lastOnlineTime = lastOnlineTime;
+    }
 
     public Integer getId() {
         return id;

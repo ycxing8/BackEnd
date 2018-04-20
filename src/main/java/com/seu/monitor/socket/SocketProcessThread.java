@@ -110,6 +110,12 @@ public class SocketProcessThread extends Thread{
                 SendFormChangeThread sendFormChangeThread = new SendFormChangeThread(socket,machineIdentifier);
                 sendFormChangeThread.start();
 
+                //打开生成报表的线程
+                if(!GenerateReportForm.ReportFormExample.containsKey(machineIdentifier)) {
+                    GenerateReportForm GenerateReportForm = new GenerateReportForm(machineIdentifier);
+                    GenerateReportForm.start();
+                }
+
 
                 //将接收数据存入数据库
                 while (judgeOnline(machineIdentifier)){

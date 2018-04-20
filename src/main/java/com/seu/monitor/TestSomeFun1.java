@@ -1,13 +1,15 @@
 package com.seu.monitor;
 
 public class TestSomeFun1 {
-    String threadStatus;
-    public TestSomeFun1(String threadStatus)
+    private Test test;
+    public TestSomeFun1(Test test)
     {
-        this.threadStatus = threadStatus;
+        this.test = test;
     }
     public void changeStatus(){
-        threadStatus = "String";
+        System.out.println(test);
+        test.setStatus(true);
+        System.out.println(test);
 
     }
 }

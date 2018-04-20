@@ -12,6 +12,9 @@ public class ComponentConfig {
             new ArrayList<String>(){{
                 add("F1");add("F2");add("F1");
     }};*/
+    public static final String componentStatusOpen ="K";
+    public static final String componentStatusClose ="G";
+    public static final String componentStatusNone ="N";
     public static final String[] componentIdentifiers =
             {"MACHINE",
             "F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12","F13",
@@ -28,6 +31,8 @@ public class ComponentConfig {
             "PWF1","PWF2"//单次产水
             };
 
+    public static final Integer noneStatusAfterNum = 1+13+6+4+3+9+8+5;
+    public static final Integer haveStatusAfterNum = 1+13+6+4+3;
     //设备状态数据所在序号
     public static final Integer machineStatusNum = 1;
 

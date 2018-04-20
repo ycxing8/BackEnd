@@ -12,30 +12,44 @@ import java.util.*;
 
 import com.seu.monitor.socket.SendFormChangeThread;
 import com.seu.monitor.socket.SocketProcessThread;
+import com.seu.monitor.utils.ComponentUtils;
+import com.seu.monitor.utils.MachineUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class TestSomeFun {
     public static void main(String[] args) {
-        test8();
+        test10();
+    }
+
+    public static void test10(){
+        java.util.Calendar date = java.util.Calendar.getInstance();
+        System.out.println(date);
+        System.out.println(date.getActualMaximum(date.DAY_OF_MONTH));
+    }
+    public static void test9(){
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String str;
+        while (true){
+            try {
+                str = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //boolean b = MachineUtils.ifOnline("01");
+            boolean b = ComponentUtils.getComponentStatus("01","M1");
+            System.out.println(b);
+        }
+
+
     }
 
     public static void test8(){
-        String i = "1";
-        try {
-            float f = (float) -0.5;
-            System.out.println(f);
-            System.out.println((int)f);
-            System.out.println(i);
-            TestSomeFun1 testx = new TestSomeFun1(i);
-            testx.changeStatus();
-            System.out.println(i);
-
-           System.out.println("run here.");
-        }catch (Exception e){
-            e.getStackTrace();
-        }finally {
-            System.out.println("Receive message form change thread end!");
-        }
+        Test test = new Test();
+        System.out.println(test);
+        System.out.println(test.getStatus());
+        TestSomeFun1 test1 = new TestSomeFun1(test);
+        test1.changeStatus();
+        System.out.println(test.getStatus());
     }
     public static void test7(){
         Map map = new HashMap();

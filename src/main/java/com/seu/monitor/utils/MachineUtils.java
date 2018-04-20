@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -66,6 +68,8 @@ public class MachineUtils {
         if(machineUtils.machineRepository.findByIdentifier(identifier).size() > 0){
             Machine machine = machineUtils.machineRepository.findByIdentifier(identifier).get(0);
             machine.setStatus(status);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            machine.setLastOnlineTime(dateFormat.format(new Date()));
             machineUtils.machineRepository.save(machine);
             return true;
         }
@@ -73,6 +77,16 @@ public class MachineUtils {
         return false;
     }
 
-
+    public static boolean ifOnline(String identifier){
+        List<Machine> machines = machineUtils.machineRepository.findByIdentifier(identifier);
+        if(machines.size() == 0) {
+            return false;
+        }
+        Machine machine = machines.get(0);
+        if(machine.getStatus().equals(MachineConfig.disConnect)) {
+            return false;
+        }
+        return true;
+    }
 
 }
