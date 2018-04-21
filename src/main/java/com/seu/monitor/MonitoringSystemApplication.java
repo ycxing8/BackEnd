@@ -20,7 +20,7 @@ public class MonitoringSystemApplication {
 		SpringApplication.run(MonitoringSystemApplication.class, args);
 		MachineUtils.createFirstMachine();
 		UserUtils.addRootUser();
-		//StartSocketServer.start();
+		StartSocketServer.start();
 		//TestSomeFun.test9();
 	}
 }
