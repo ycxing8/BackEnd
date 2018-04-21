@@ -26,6 +26,18 @@ public class TemplateController {
         return "redirect:html/login.html";
     }
 
+    //@PostMapping(value ="/{}")
+    @PostMapping(value ="/goto")
+    public String gotoByName(@RequestParam("name")String name,
+    HttpSession session,
+    ModelMap modelMap){
+        if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),
+                UserConfig.NORMAL_USER)){
+            return "redirect:html/login.html";
+        }
+        return "/" + name;
+    }
+
     @PostMapping(value = "/login")
     public String loginTest(@RequestParam("name")String name,
                             @RequestParam("password")String password,

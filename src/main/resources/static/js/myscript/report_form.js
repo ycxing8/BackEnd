@@ -14,9 +14,8 @@ function getReportForm() {
     });
 }
 
-function cycleGetComponent() {
-    getComponent();
-    setInterval("getComponent()","1000");
+function cycleGetReportForm() {
+    getReportForm();
 }
 //定义一个avalonjs的控制器
 var viewmodel = avalon.define({

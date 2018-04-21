@@ -5,9 +5,11 @@ import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.socket.ReceiveFormChangeThread;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.*;
 
 import com.seu.monitor.socket.SendFormChangeThread;
@@ -18,9 +20,44 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class TestSomeFun {
     public static void main(String[] args) {
-        test10();
+        test11();
     }
+    private static void test11(){
+        Set names=Charset.availableCharsets().keySet();
+        for (Iterator iter = names.iterator(); iter.hasNext();) {
+            String charsetName = (String) iter.next();
+            if (Charset.isSupported(charsetName)) {
+                System.out.println(charsetName);
+            }
+        }
+    }
+    public static void createFile(){
 
+        String path= "测试";//所创建文件的路径
+
+        File f = new File(path);
+
+        if(!f.exists()){
+
+            f.mkdirs();//创建目录
+        }
+
+        String fileName = "abc.txt";//文件名及类型
+
+        File file = new File(path, fileName);
+
+        if(!file.exists()){
+
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+    }
     public static void test10(){
         java.util.Calendar date = java.util.Calendar.getInstance();
         System.out.println(date);
