@@ -122,4 +122,15 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/get_my_message")
+    public User getMyMessage(HttpSession session) {
+
+        User user = new User();
+        String str = (String) session.getAttribute(UserConfig.USER_NAME);
+        user.setName(str);
+        str = (String) session.getAttribute(UserConfig.USER_POWER);
+        user.setPower(str);
+        return user;
+    }
+
 }

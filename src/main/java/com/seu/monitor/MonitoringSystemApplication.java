@@ -21,6 +21,6 @@ public class MonitoringSystemApplication {
 		MachineUtils.createFirstMachine();
 		UserUtils.addRootUser();
 		StartSocketServer.start();
-		TestSomeFun.test9();
+		//TestSomeFun.test9();
 	}
 }

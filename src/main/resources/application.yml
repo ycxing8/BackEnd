@@ -8,9 +8,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  thymeleaf:
+    cache: false
   mvc:
     favicon:
-      enabled: false
+      enabled: true
 
 server:
   port: 8081
