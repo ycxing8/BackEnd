@@ -9,10 +9,10 @@ spring:
     hibernate:
       ddl-auto: update
   thymeleaf:
-    cache: false
+    cache: true
   mvc:
     favicon:
-      enabled: true
+      enabled: false
 
 server:
   port: 8081
