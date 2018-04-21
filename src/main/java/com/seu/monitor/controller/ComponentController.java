@@ -35,7 +35,7 @@ public class ComponentController {
         componentCompositeKey.setIdentifier(identifier);
         component.setPk(componentCompositeKey);
         componentRepository.save(component);
-        return "OK!";
+        return "OK";
     }
 
     @PostMapping(value = "/modify")
@@ -59,7 +59,7 @@ public class ComponentController {
         component.setDescription(description);
         componentRepository.save(component);
 
-        return "OK!";
+        return "OK";
     }
 
 

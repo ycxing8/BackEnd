@@ -38,7 +38,7 @@ public class UserController {
         if(user.getPassword().equals(password)){
             session.setAttribute(UserConfig.USER_POWER, user.getPower());
             session.setAttribute(UserConfig.USER_NAME, user.getName());
-            return user.getName() + " login success;" + "you are " + user.getPower();
+            return "OK";
         }
 
         return "密码错误，请检查密码！";
@@ -48,7 +48,7 @@ public class UserController {
     public String loginOut(HttpSession session){
         session.removeAttribute(UserConfig.USER_POWER);
         session.removeAttribute(UserConfig.USER_NAME);
-        return "login out ok!";
+        return "OK";
     }
 
     @PostMapping(value = "/add")
@@ -67,7 +67,7 @@ public class UserController {
             user.setPassword(password);
             user.setPower(UserConfig.getUserPowerByInteger(powerInteger));
             userRepository.save(user);
-            return "用户添加成功！";
+            return "OK";
         }
     }
 
@@ -91,7 +91,7 @@ public class UserController {
                 return "原来的密码输入错误，请检查！";
             }
         }
-        return "密码修改成功！";
+        return "OK";
     }
 
     @PostMapping(value = "/change_power")
@@ -109,7 +109,7 @@ public class UserController {
             User user = userList.get(0);
             user.setPower(UserConfig.getUserPowerByInteger(powerInteger));
             userRepository.save(user);
-            return "用户权限已更改！";
+            return "OK";
         }
     }
 
@@ -120,6 +120,17 @@ public class UserController {
         }else {
             return userRepository.findAll();
         }
+    }
+
+    @GetMapping(value = "/get_my_message")
+    public User getMyMessage(HttpSession session) {
+
+        User user = new User();
+        String str = (String) session.getAttribute(UserConfig.USER_NAME);
+        user.setName(str);
+        str = (String) session.getAttribute(UserConfig.USER_POWER);
+        user.setPower(str);
+        return user;
     }
 
 }
