@@ -134,9 +134,9 @@ public class ReportFormController {
 
     private void generateCsv(String machineIdentifier, String date, List<ReportForm> reportFormList){
         String cvsName = machineIdentifier + "设备" + date + "报表.csv";
-        String path= "target\\classes\\static";
+        //String path= "target/classes/static/report_form";
         try {
-            File file = new File(path, cvsName);
+            File file = createFile(cvsName);
             FileOutputStream out = new FileOutputStream(file);
             byte [] bs = { (byte)0xEF, (byte)0xBB, (byte)0xBF};   //BOM
             out.write(bs);
@@ -164,7 +164,7 @@ public class ReportFormController {
 
     private File createFile(String cvsName){
 
-        String path= "target\\classes\\static";//所创建文件的路径
+        String path= "target/classes/static/report_form";//所创建文件的路径
 
         File f = new File(path);
 
@@ -187,7 +187,7 @@ public class ReportFormController {
             }
 
         }
-        return f;
+        return file;
 
     }
 

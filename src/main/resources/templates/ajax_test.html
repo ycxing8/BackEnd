@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>部件信息</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+</head>
+<body ms-controller="viewmodel" onload="cycleGetComponent()">
+<h1>Hello World</h1>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <td class="active">编号</td>
+        <td class="success">种类</td>
+        <td class="warning">编号</td>
+        <td class="danger">名称</td>
+        <td class="info">状态</td>
+        <td class="active">数据</td>
+        <td class="success">单位</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ms-for="el in @datalist">
+        <td >{{el.id}}</td>
+        <td>{{el.kind}}</td>
+        <td >{{el.pk.identifier}}</td>
+        <td>{{el.name}}</td>
+        <td>{{el.status}}</td>
+        <td >{{el.realTimeData}}</td>
+        <td >{{el.unit}}</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/avalon.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/myscript1.js"></script>
+</html>

@@ -51,7 +51,7 @@ public class MachineController {
         operation.setTime(dateFormat.format(new Date()));
         operation.setDescription(controlWord);
         operationRepository.save(operation);
-        return "OK!";
+        return "OK";
     }
 
     //控制数据型如：11 K 50 ,是字符串形式的
@@ -109,7 +109,7 @@ public class MachineController {
         operation.setTime(dateFormat.format(new Date()));
         operation.setDescription(controlWord);
         operationRepository.save(operation);
-        return "OK!";
+        return "OK";
     }
 
     @PostMapping(value = "/add")
@@ -120,7 +120,7 @@ public class MachineController {
             return "m没有足够权限！";
         }else{
             MachineUtils.createAMachine(identifier);
-            return "OK!";
+            return "OK";
         }
     }
 
@@ -144,7 +144,7 @@ public class MachineController {
             machine.setPlace(place);
             machine.setDescription(description);
             machineRepository.save(machine);
-            return "OK!";
+            return "OK";
         }
     }
 

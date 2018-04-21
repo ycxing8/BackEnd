@@ -35,7 +35,7 @@ public class TemplateController {
                 UserConfig.NORMAL_USER)){
             return "redirect:html/login.html";
         }
-        return "/" + name;
+        return name;
     }
 
     @PostMapping(value = "/login")
