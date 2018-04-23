@@ -1,10 +1,12 @@
 package com.seu.monitor.controller;
 
 import com.seu.monitor.TestSomeFun;
+import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.config.ReportFormConfig;
 import com.seu.monitor.config.UserConfig;
 import com.seu.monitor.entity.ReportForm;
 import com.seu.monitor.repository.ReportFormRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +54,11 @@ public class ReportFormController {
     @PostMapping(value = "/get_by_month")
     public List<ReportForm> getByMonth(@RequestParam("machine_identifier")String machineIdentifier,
                                              @RequestParam("date")String date,
-                                             HttpSession session){
+                                             HttpSession session) {
+        return getMonthReport(machineIdentifier,date,session);
+    }
+    private List<ReportForm> getMonthReport(String machineIdentifier, String date,
+                                       HttpSession session){
         //date 格式为：yyyy-MM
         if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),
                 UserConfig.NORMAL_USER)){
@@ -128,15 +134,31 @@ public class ReportFormController {
             }
             reportFormList.add(reportForm);
         }
-        generateCsv(machineIdentifier,date,reportFormList);
         return reportFormList;
     }
 
-    private void generateCsv(String machineIdentifier, String date, List<ReportForm> reportFormList){
+    @PostMapping(value = "/get_report_file_url")
+    public String getReportFileUrl(@RequestParam("machine_identifier")String machineIdentifier,
+                                   @RequestParam("date")String date,
+                                   HttpSession session){
+        if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),
+                UserConfig.NORMAL_USER)){
+            return "没有权限！";
+        }
+        List<ReportForm> reportFormList = getMonthReport(machineIdentifier,date,session);
+        Date nowDate = new Date();
+        String str = DigestUtils.md5Hex(nowDate.getTime()+"");
         String cvsName = machineIdentifier + "设备" + date + "报表.csv";
-        //String path= "target/classes/static/report_form";
+        String path= "target/classes/static/report_form/" + str;//所创建文件的路径
+        String url = "report_form/" + str + "/" + cvsName;
+        generateCsv(path,cvsName,reportFormList);
+        return url;
+    }
+
+    private void generateCsv(String path, String cvsName, List<ReportForm> reportFormList){
+
         try {
-            File file = createFile(cvsName);
+            File file = createFile(path,cvsName);
             FileOutputStream out = new FileOutputStream(file);
             byte [] bs = { (byte)0xEF, (byte)0xBB, (byte)0xBF};   //BOM
             out.write(bs);
@@ -162,9 +184,7 @@ public class ReportFormController {
 
     }
 
-    private File createFile(String cvsName){
-
-        String path= "target/classes/static/report_form";//所创建文件的路径
+    private File createFile(String path, String cvsName){
 
         File f = new File(path);
 
