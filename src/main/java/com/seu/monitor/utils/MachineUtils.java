@@ -50,8 +50,9 @@ public class MachineUtils {
     public static void createFirstMachine(){
         createAMachine(MachineConfig.firstMachineIdentifier);
     }
+
     public static void createAMachine(String machineIdentifier){
-        if(machineUtils.machineRepository.findAll().size() == 0){
+        if(machineUtils.machineRepository.findByIdentifier(machineIdentifier).size() == 0){
             Machine machine = new Machine();
             machine.setIdentifier(machineIdentifier);
             machine.setIdentityCode(DigestUtils.md5Hex(machineIdentifier));

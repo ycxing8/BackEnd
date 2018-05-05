@@ -22,11 +22,11 @@ public class ComponentController {
     private ComponentRepository componentRepository;
 
     @PostMapping(value = "/add")
-    public String add(@RequestParam("machine_identifier")String machineIdentifier,
-                      @RequestParam("identifier")String identifier,
-                      HttpSession session){
-        if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),
-                UserConfig.ADMIN)){
+    public String add(@RequestParam("machine_identifier") String machineIdentifier,
+                      @RequestParam("identifier") String identifier,
+                      HttpSession session) {
+        if (!UserConfig.verifyUserPower((String) session.getAttribute(UserConfig.USER_POWER),
+                UserConfig.ADMIN)) {
             return "没有足够权限！";
         }
         com.seu.monitor.entity.Component component = new com.seu.monitor.entity.Component();
@@ -39,18 +39,18 @@ public class ComponentController {
     }
 
     @PostMapping(value = "/modify")
-    public String modify(@RequestParam("machine_identifier")String machineIdentifier,
-                      @RequestParam("identifier")String identifier,
-                      @RequestParam("kind")String kind,
-                      @RequestParam("name")String name,
-                      @RequestParam("description")String description,
-                      HttpSession session){
-        if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),
-                UserConfig.ADMIN)){
+    public String modify(@RequestParam("machine_identifier") String machineIdentifier,
+                         @RequestParam("identifier") String identifier,
+                         @RequestParam("kind") String kind,
+                         @RequestParam("name") String name,
+                         @RequestParam("description") String description,
+                         HttpSession session) {
+        if (!UserConfig.verifyUserPower((String) session.getAttribute(UserConfig.USER_POWER),
+                UserConfig.ADMIN)) {
             return "没有足够权限！";
         }
         List<Component> componentList = componentRepository.findByPkMachineIdentifierAndPkIdentifier(machineIdentifier, identifier);
-        if(componentList.size() == 0){
+        if (componentList.size() == 0) {
             return "没有这个组件！";
         }
         Component component = componentList.get(0);
@@ -63,16 +63,15 @@ public class ComponentController {
     }
 
 
-
-    @PostMapping(value ="/get_by_machine_identifier")
-    public List<Component> getByMachineIdentifier(@RequestParam("machine_identifier")String machineIdentifier,
-                                                  HttpSession session){
-        if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),UserConfig.NORMAL_USER)){
+    @PostMapping(value = "/get_by_machine_identifier")
+    public List<Component> getByMachineIdentifier(@RequestParam("machine_identifier") String machineIdentifier,
+                                                  HttpSession session) {
+        if (!UserConfig.verifyUserPower((String) session.getAttribute(UserConfig.USER_POWER), UserConfig.NORMAL_USER)) {
             //user’s power is accord with need power
             return new ArrayList<>();
         }
         List<Component> componentList = componentRepository.findByPkMachineIdentifier(machineIdentifier);
-        Collections.sort(componentList, new Comparator<Component>(){
+        Collections.sort(componentList, new Comparator<Component>() {
             @Override
             public int compare(Component c1, Component c2) {
                 return c1.getId() - c2.getId();
@@ -82,13 +81,13 @@ public class ComponentController {
     }
 
     @GetMapping(value = "/get_all")
-    public List<Component> getAllComponentMessage(HttpSession session){
+    public List<Component> getAllComponentMessage(HttpSession session) {
 
-       if(!UserConfig.verifyUserPower((String)session.getAttribute(UserConfig.USER_POWER),UserConfig.NORMAL_USER)){
-          //user’s power is accord with need power
-           return new ArrayList<Component>();
-       }
-       return componentRepository.findAll();
+        if (!UserConfig.verifyUserPower((String) session.getAttribute(UserConfig.USER_POWER), UserConfig.NORMAL_USER)) {
+            //user’s power is accord with need power
+            return new ArrayList<Component>();
+        }
+        return componentRepository.findAll();
     }
 
 }
