@@ -33,7 +33,7 @@ public class MachineController {
     public String controlByWord(@RequestParam("identifier")String identifier,
     @RequestParam("control_word")String controlWord,
     HttpSession session){
-        if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.ADMIN)){
+        if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.SPECIAL_USER)){
             return "你没有足够权限！";
         }
         List<Machine> machineList = machineRepository.findByIdentifier(identifier);
@@ -59,7 +59,7 @@ public class MachineController {
     public String controlByNum(@RequestParam("identifier")String identifier,
                                  @RequestParam("short_word")String shortWord,
                                  HttpSession session){
-        if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.ADMIN)){
+        if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.SPECIAL_USER)){
             return "你没有足够权限！";
         }
         List<Machine> machineList = machineRepository.findByIdentifier(identifier);
