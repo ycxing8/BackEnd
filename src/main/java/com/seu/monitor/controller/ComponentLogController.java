@@ -23,7 +23,8 @@ public class ComponentLogController {
     public List<ComponentLog> getComponentLog(@RequestParam("machine_identifier")String machineIdentifier,
             @RequestParam("component_identifier")String componentIdentifier,
                                               HttpSession session){
-        if(!session.getAttribute(UserConfig.USER_POWER).equals(UserConfig.ADMIN)){
+        if(!UserConfig.verifyUserPower((String) session.getAttribute(UserConfig.USER_POWER),
+                UserConfig.NORMAL_USER)){
             return null;
         }else {
             return componentLogRepository.findByMachineIdentifierAndComponentIdentifier(machineIdentifier,componentIdentifier);
