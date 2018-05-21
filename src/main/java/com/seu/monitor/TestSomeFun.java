@@ -20,7 +20,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class TestSomeFun {
     public static void main(String[] args) {
-        test11();
+        test12();
+    }
+    private static void test12(){
+        String sb = "1234567";
+        String x = sb.substring(0, 5);
+        System.out.println(x);
     }
     private static void test11(){
         Set names=Charset.availableCharsets().keySet();

@@ -77,6 +77,14 @@ public class ComponentController {
                 return c1.getId() - c2.getId();
             }
         });
+        for(int i = 0; i < componentList.size(); i++){
+            Component component = componentList.get(i);
+            String str = component.getRealTimeData();
+            int len = str.length() > 6 ? 6 : str.length();
+            str = str.substring(0, len);
+            component.setRealTimeData(str);
+            componentList.set(i, component);
+        }
         return componentList;
     }
 
