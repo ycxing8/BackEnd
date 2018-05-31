@@ -88,7 +88,7 @@ public class ReportFormController {
             e.printStackTrace();
         }
         int index = 0;
-        for(int i = 0; i < dayOfTheMonth; i++) {
+        for(int i = 1; i <= dayOfTheMonth; i++) {
             String dayDate;
             if(i < 10){
                 dayDate = "0" + i;

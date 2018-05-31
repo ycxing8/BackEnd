@@ -74,4 +74,26 @@ public class ReportFormUtils {
         ReportFormUtils.reportFormUtils.reportFormRepository.save(reportForm);
     }
 
+    //This function is used for test.
+    public static void addDayReportForm(String machineIdentifier, String date, double[]data){
+        for(int i =0; i < (ReportFormConfig.numOfProduceData); i++){
+            ReportForm reportForm = new ReportForm();
+            reportForm.setMachineIdentifier(machineIdentifier);
+            reportForm.setContent(ReportFormConfig.reportFormContent[i + ReportFormConfig.numOfMotor]);
+            reportForm.setDate(date);
+            reportForm.setUnit(ReportFormConfig.volumeUnit);
+            reportForm.setData(data[i] + "");
+            ReportFormUtils.reportFormUtils.reportFormRepository.save(reportForm);
+        }
+        for(int i =0; i < (ReportFormConfig.numOfMotor); i++){
+            ReportForm reportForm = new ReportForm();
+            reportForm.setMachineIdentifier(machineIdentifier);
+            reportForm.setContent(ReportFormConfig.reportFormContent[i]);
+            reportForm.setDate(date);
+            reportForm.setUnit(ReportFormConfig.timeUnit);
+            reportForm.setData(data[i + ReportFormConfig.numOfProduceData] + "");
+            ReportFormUtils.reportFormUtils.reportFormRepository.save(reportForm);
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.seu.monitor;
 import com.seu.monitor.config.ComponentConfig;
 import com.seu.monitor.config.MachineConfig;
 import com.seu.monitor.socket.ReceiveFormChangeThread;
+import java.util.Random;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,11 +17,40 @@ import com.seu.monitor.socket.SendFormChangeThread;
 import com.seu.monitor.socket.SocketProcessThread;
 import com.seu.monitor.utils.ComponentUtils;
 import com.seu.monitor.utils.MachineUtils;
+import com.seu.monitor.utils.ReportFormUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class TestSomeFun {
     public static void main(String[] args) {
-        test12();
+        test13();
+    }
+
+    public static void test13(){
+        double []data = new double[11];
+        for(int i = 1; i <= 6; i++){
+            String date = "2018-06-0";
+            date = date + (i + "");
+            double run1time = Math.random()*2 + 4;
+            double run2time = Math.random()*2 + 3;
+            double run3time = Math.random() + 0.5;
+            double out1 = Math.random()*0.5 + 2.5;
+            double out2 = Math.random()*0.2 + 0.4;
+            data[0] = 1.32 * run1time * out1;
+            data[1] = 0.32 * run1time * out1;
+            data[2] = run1time * out1;
+            data[3] = data[1];
+            data[4] = data[3] - run2time * out2;
+            data[5] = run2time * out2;
+            data[6] = run1time;
+            data[7] = data[6];
+            data[8] = run2time;
+            data[9] = data[8];
+            data[10] = run3time;
+
+            ReportFormUtils.addDayReportForm("01", date, data);
+        }
+
+
     }
     private static void test12(){
         String sb = "1234567";
